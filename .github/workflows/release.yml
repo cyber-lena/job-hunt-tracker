@@ -1,6 +1,7 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*"          # trigger on v1.0.0, v1.2.3, etc.
