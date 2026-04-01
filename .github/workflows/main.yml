@@ -1,0 +1,199 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"          # trigger on v1.0.0, v1.2.3, etc.
+
+permissions:
+  contents: write   # needed to create GitHub Releases and upload assets
+
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  LINUX — builds binary + .deb
+# ══════════════════════════════════════════════════════════════════════════════
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Install WebKitGTK (webview runtime)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            gcc pkg-config \
+            libwebkit2gtk-4.1-dev || \
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.0-dev
+
+      - name: Build Linux binary
+        env:
+          CGO_ENABLED: "1"
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          go mod tidy
+          mkdir -p dist
+          go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
+            -o dist/job-tracker-linux-amd64 .
+
+      - name: Build .deb package
+        run: bash build/linux/build-deb.sh
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            dist/job-tracker-linux-amd64
+            dist/*.deb
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  WINDOWS — builds binary + NSIS Setup.exe
+# ══════════════════════════════════════════════════════════════════════════════
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build Windows binary
+        shell: pwsh
+        env:
+          CGO_ENABLED: "1"
+          GOOS: windows
+          GOARCH: amd64
+        run: |
+          go mod tidy
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          go build -ldflags "-s -w -X main.version=${{ github.ref_name }} -H=windowsgui" `
+            -o dist\job-tracker-windows-amd64.exe .
+
+      - name: Install NSIS
+        run: choco install nsis --no-progress -y
+
+      - name: Build NSIS installer
+        shell: cmd
+        run: makensis build\windows\installer.nsi
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            dist/job-tracker-windows-amd64.exe
+            dist/JobHuntTracker-Setup.exe
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  MACOS — builds binary + .app + .dmg  (both Intel and Apple Silicon)
+# ══════════════════════════════════════════════════════════════════════════════
+  build-macos:
+    runs-on: macos-latest       # Apple Silicon runner (M1)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build macOS arm64 binary (Apple Silicon)
+        env:
+          CGO_ENABLED: "1"
+          GOOS: darwin
+          GOARCH: arm64
+        run: |
+          go mod tidy
+          mkdir -p dist
+          go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
+            -o dist/job-tracker-darwin-arm64 .
+
+      - name: Build macOS amd64 binary (Intel)
+        env:
+          CGO_ENABLED: "1"
+          GOOS: darwin
+          GOARCH: amd64
+        run: |
+          go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
+            -o dist/job-tracker-darwin-amd64 .
+
+      - name: Create universal binary (arm64 + amd64)
+        run: |
+          lipo -create -output dist/job-tracker-darwin-universal \
+            dist/job-tracker-darwin-arm64 \
+            dist/job-tracker-darwin-amd64
+          # Use universal binary for the .app
+          cp dist/job-tracker-darwin-universal dist/job-tracker-darwin-arm64
+
+      - name: Build .app bundle and .dmg
+        run: bash build/macos/build-dmg.sh
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: |
+            dist/job-tracker-darwin-universal
+            dist/JobHuntTracker.dmg
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  RELEASE — collect all artifacts and publish to GitHub Releases
+# ══════════════════════════════════════════════════════════════════════════════
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten artifact directories
+        run: |
+          mkdir -p release
+          find artifacts -type f | while read f; do
+            cp "$f" release/
+          done
+          ls -lh release/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Job Hunt Tracker ${{ github.ref_name }}"
+          body: |
+            ## Job Hunt Tracker ${{ github.ref_name }}
+
+            ### Downloads
+
+            | Platform | File | Notes |
+            |----------|------|-------|
+            | **Windows** | `JobHuntTracker-Setup.exe` | Installer wizard — recommended |
+            | **Windows** | `job-tracker-windows-amd64.exe` | Standalone binary |
+            | **macOS** | `JobHuntTracker.dmg` | Drag to Applications |
+            | **macOS** | `job-tracker-darwin-universal` | Universal binary (Intel + Apple Silicon) |
+            | **Linux** | `job-hunt-tracker_*_amd64.deb` | `sudo dpkg -i` |
+            | **Linux** | `job-tracker-linux-amd64` | Standalone binary |
+
+            ### macOS Gatekeeper
+            On first launch: right-click the app → **Open** to bypass the unsigned-app warning.
+
+            ### Linux runtime dependency
+            ```
+            sudo apt install libwebkit2gtk-4.1-0
+            ```
+          draft: false
+          prerelease: false
+          files: release/*
