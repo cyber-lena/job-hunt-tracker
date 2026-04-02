@@ -27,12 +27,9 @@ jobs:
 
       - name: Install WebKitGTK (webview runtime)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            gcc pkg-config \
-            webkit2gtk-4.1 || \
-          sudo apt-get install -y --no-install-recommends \
-            webkit2gtk-4.1
+         sudo apt-get update -qq
+         sudo apt-get install -y --no-install-recommends \
+         gcc pkg-config libwebkit2gtk-4.1-dev
 
       - name: Build Linux binary
         env:
