@@ -24,12 +24,12 @@ jobs:
         with:
           go-version: "1.22"
           cache: true
-          
+
       - name: Install WebKitGTK (webview runtime)
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
-            gcc pkg-config libwebkit2gtk-4.1-dev
+            gcc pkg-config libwebkit2gtk-4.1-dev imagemagick
           # Alias webkit2gtk-4.0 → webkit2gtk-4.1 so webview_go's hardcoded
           # pkg-config name resolves correctly on Ubuntu 22.04+
           sudo ln -sf \
@@ -80,6 +80,10 @@ jobs:
           GOARCH: amd64
         run: |
           go mod tidy
+          # Install go-winres and generate the .syso resource file
+          # (embeds icon.ico into the .exe so Explorer shows the custom icon)
+          go install github.com/tc-hib/go-winres@latest
+          go-winres make --in winres/winres.json
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           go build -ldflags "-s -w -X main.version=${{ github.ref_name }} -H=windowsgui" `
             -o dist\job-tracker-windows-amd64.exe .
@@ -88,11 +92,9 @@ jobs:
         run: choco install nsis --no-progress -y
 
       - name: Build NSIS installer
-        shell: pwsh
-        run: |
-         $env:PATH += ";C:\Program Files (x86)\NSIS"
-         & "C:\Program Files (x86)\NSIS\makensis.exe" build/windows/installer.nsi
-      
+        shell: cmd
+        run: makensis build\windows\installer.nsi
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -152,6 +154,7 @@ jobs:
           path: |
             dist/job-tracker-darwin-universal
             dist/JobHuntTracker.dmg
+
 # ══════════════════════════════════════════════════════════════════════════════
 #  RELEASE — collect all artifacts and publish to GitHub Releases
 # ══════════════════════════════════════════════════════════════════════════════
