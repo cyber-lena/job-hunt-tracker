@@ -1,4 +1,4 @@
-BINARY   := job-tracker
+BINARY   := job-hunt-tracker
 DIST     := dist
 VERSION  := $(shell git describe --tags --always 2>/dev/null || echo "1.0.0")
 
@@ -63,13 +63,14 @@ build-darwin-arm64:
 # This target runs on Linux/Mac with mingw-w64 cross-compiler.
 # On Windows CMD/PowerShell use:  build\windows\build.bat
 #                            or:  build\windows\build.ps1
-build-windows:
+build-windows: generate-rsrc
 	@mkdir -p $(DIST)
 	CGO_ENABLED=1 GOOS=windows GOARCH=amd64 \
 	  CC=x86_64-w64-mingw32-gcc \
 	  go build $(LDFLAGS_WIN) -o $(DIST)/$(BINARY)-windows-amd64.exe .
-	@echo "  → $(DIST)/$(BINARY)-windows-amd64.exe"
 
+generate-rsrc:
+	rsrc -ico winres/icon.ico
 # ── Windows cross-compile from Linux using mingw-w64 (alias) ─────────────────
 build-windows-cross: build-windows
 
