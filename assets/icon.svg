@@ -1,0 +1,35 @@
+<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="256" x2="256" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1a1e29"/>
+      <stop offset="100%" stop-color="#252a38"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="0" y1="256" x2="256" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#5b8af5"/>
+      <stop offset="50%"  stop-color="#a35bf5"/>
+      <stop offset="100%" stop-color="#f5a35b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="256" height="256" rx="52" ry="52" fill="url(#bg)"/>
+
+  <!-- Outer ring -->
+  <circle cx="128" cy="128" r="100" stroke="url(#g1)" stroke-width="7" fill="none"/>
+
+  <!-- Dashed orbit ring -->
+  <circle cx="128" cy="128" r="68" stroke="url(#g1)" stroke-width="4"
+          stroke-dasharray="14 10" fill="none" opacity="0.55"/>
+
+  <!-- Arrow shaft -->
+  <line x1="128" y1="172" x2="128" y2="88"
+        stroke="url(#g1)" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- Arrow head -->
+  <polyline points="92,122 128,82 164,122"
+            stroke="url(#g1)" stroke-width="12"
+            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Anchor dot -->
+  <circle cx="128" cy="178" r="9" fill="url(#g1)"/>
+</svg>

@@ -110,6 +110,49 @@ func (s *server) deleteApplication(w http.ResponseWriter, r *http.Request, id in
 	writeJSON(w, 200, map[string]any{"deleted": id})
 }
 
+// ─── Router ──────────────────────────────────────────────────────────────────
+
+func (s *server) router(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+
+	if path == "/" || path == "/index.html" {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		w.Write(indexHTML)
+		return
+	}
+
+	if path == "/api/applications" {
+		switch r.Method {
+		case http.MethodGet:
+			s.listApplications(w, r)
+		case http.MethodPost:
+			s.createApplication(w, r)
+		default:
+			writeError(w, 405, "Method not allowed")
+		}
+		return
+	}
+
+	if strings.HasPrefix(path, "/api/applications/") {
+		id, ok := idFromPath(path, "/api/applications/")
+		if !ok {
+			writeError(w, 400, "Invalid ID")
+			return
+		}
+		switch r.Method {
+		case http.MethodPut:
+			s.updateApplication(w, r, id)
+		case http.MethodDelete:
+			s.deleteApplication(w, r, id)
+		default:
+			writeError(w, 405, "Method not allowed")
+		}
+		return
+	}
+
+	writeError(w, 404, "Not found")
+}
 
 // ─── Data directory ───────────────────────────────────────────────────────────
 
@@ -177,66 +220,13 @@ func main() {
 
 	w.SetTitle("Job Hunt Tracker")
 	w.SetSize(1280, 820, webview.HintNone)
+
+	// Set custom icon in the title bar and taskbar (Windows only).
+	// The .exe file icon is set separately via the embedded .syso resource
+	// compiled by go-winres (see winres/ directory).
+	w.Dispatch(func() {
+		setWindowIcon(w.Window())
+	})
 	w.Navigate(appURL)
 	w.Run() // blocks until the window is closed → process exits cleanly
 }
-
-
-
-// ─── Router ──────────────────────────────────────────────────────────────────
-
-func (s *server) router(w http.ResponseWriter, r *http.Request) {
-	// CORS for local dev
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(204)
-		return
-	}
-
-	path := r.URL.Path
-
-	// Static files — served from embedded binary
-	if path == "/" || path == "/index.html" {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		w.Write(indexHTML)
-		return
-	}
-
-	// /api/applications
-	if path == "/api/applications" {
-		switch r.Method {
-		case http.MethodGet:
-			s.listApplications(w, r)
-		case http.MethodPost:
-			s.createApplication(w, r)
-		default:
-			writeError(w, 405, "Method not allowed")
-		}
-		return
-	}
-
-	// /api/applications/{id}
-	if strings.HasPrefix(path, "/api/applications/") {
-		id, ok := idFromPath(path, "/api/applications/")
-		if !ok {
-			writeError(w, 400, "Invalid ID")
-			return
-		}
-		switch r.Method {
-		case http.MethodPut:
-			s.updateApplication(w, r, id)
-		case http.MethodDelete:
-			s.deleteApplication(w, r, id)
-		default:
-			writeError(w, 405, "Method not allowed")
-		}
-		return
-	}
-
-	writeError(w, 404, "Not found")
-}
-
-// ─── Data directory ───────────────────────────────────────────────────────────

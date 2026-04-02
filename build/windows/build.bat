@@ -19,6 +19,14 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
+echo [..] Generating Windows resources (icon + manifest)...
+go install github.com/tc-hib/go-winres@latest
+go-winres make --in winres\winres.json
+if %ERRORLEVEL% neq 0 (
+    echo [!!] go-winres failed. Make sure winres\icon.ico exists.
+    exit /b 1
+)
+
 echo [..] Building...
 go build -ldflags "-s -w -H=windowsgui" -o dist\job-tracker-windows-amd64.exe .
 if %ERRORLEVEL% neq 0 (
