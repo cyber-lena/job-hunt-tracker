@@ -2,6 +2,8 @@
 
 A standalone desktop application to track your job applications from first contact to offer. Runs fully locally — no browser, no cloud, no account.
 
+![](jht.png)
+
 ## Stack
 
 | Layer     | Tech |
