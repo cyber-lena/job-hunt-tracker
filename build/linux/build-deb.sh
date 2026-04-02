@@ -40,7 +40,7 @@ cd "$ROOT_DIR"
 if [ ! -f "$BINARY_SRC" ]; then
   echo "▶  Building linux/amd64 binary…"
   go mod tidy
-  GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o "$BINARY_SRC" .
+  GOOS=linux GOARCH=amd64 go build -tags webkit2gtk_4_1 -ldflags "-s -w" -o "$BINARY_SRC" .
 fi
 echo "✔  Binary: $BINARY_SRC"
 
@@ -102,7 +102,7 @@ Description: $DESCRIPTION
  A standalone desktop app to track job applications.
  Opens as a native window using WebKitGTK.
  Data is stored in ~/.config/JobHuntTracker/jobs.db.
-Depends: libwebkit2gtk-4.1-0 | libwebkit2gtk-4.0-37
+Depends: libwebkit2gtk-4.1-0
 Section: utils
 Priority: optional
 Homepage: https://github.com/your-repo/job-hunt-tracker
