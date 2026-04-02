@@ -225,7 +225,7 @@ func main() {
 	// The .exe file icon is set separately via the embedded .syso resource
 	// compiled by go-winres (see winres/ directory).
 	w.Dispatch(func() {
-		setWindowIcon(w.Window())
+		setWindowIcon(uintptr(w.Window()))
 	})
 	w.Navigate(appURL)
 	w.Run() // blocks until the window is closed → process exits cleanly
