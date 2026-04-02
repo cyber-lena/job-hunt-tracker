@@ -7,8 +7,8 @@
 $ErrorActionPreference = "Stop"
 
 $env:CGO_ENABLED = "1"
-$env:GOOS        = "windows"
-$env:GOARCH      = "amd64"
+$env:GOOS = "windows"
+$env:GOARCH = "amd64"
 
 if (-not (Test-Path "dist")) { New-Item -ItemType Directory -Path "dist" | Out-Null }
 
@@ -21,11 +21,11 @@ go install github.com/tc-hib/go-winres@latest
 go-winres make --in winres\winres.json
 if ($LASTEXITCODE -ne 0) { Write-Host "[!!] go-winres failed. Make sure winres\icon.ico exists."; exit 1 }
 
-Write-Host "[..] Building job-tracker-windows-amd64.exe..."
-go build -ldflags "-s -w -H=windowsgui" -o dist\job-tracker-windows-amd64.exe .
+Write-Host "[..] Building job-hunt-tracker-windows-amd64.exe..."
+go build -ldflags "-s -w -H=windowsgui" -o dist\job-hunt-tracker-windows-amd64.exe .
 if ($LASTEXITCODE -ne 0) { Write-Host "[!!] Build failed."; exit 1 }
 
-Write-Host "[OK] dist\job-tracker-windows-amd64.exe"
+Write-Host "[OK] dist\job-hunt-tracker-windows-amd64.exe"
 
 # Optional: run NSIS installer build
 # makensis build\windows\installer.nsi

@@ -28,11 +28,11 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo [..] Building...
-go build -ldflags "-s -w -H=windowsgui" -o dist\job-tracker-windows-amd64.exe .
+go build -ldflags "-s -w -H=windowsgui" -o dist\job-hunt-tracker-windows-amd64.exe .
 if %ERRORLEVEL% neq 0 (
     echo [!!] Build failed.
     exit /b 1
 )
 
-echo [OK] dist\job-tracker-windows-amd64.exe
+echo [OK] dist\job-hunt-tracker-windows-amd64.exe
 endlocal

@@ -26,7 +26,7 @@ DESCRIPTION="Track your job applications from first contact to offer"
 
 ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 DIST_DIR="$ROOT_DIR/dist"
-BINARY_SRC="$DIST_DIR/job-tracker-linux-amd64"
+BINARY_SRC="$DIST_DIR/job-hunt-tracker-linux-amd64"
 DEB_ROOT="$DIST_DIR/deb-pkg"
 DEB_OUT="$DIST_DIR/${PKG_NAME}_${VERSION}_${ARCH}.deb"
 

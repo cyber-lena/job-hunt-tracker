@@ -33,7 +33,7 @@ case "$ARCH" in
     echo "Unsupported arch: $ARCH"; exit 1 ;;
 esac
 
-BINARY_SRC="$DIST_DIR/job-tracker-darwin-$GO_ARCH"
+BINARY_SRC="$DIST_DIR/job-hunt-tracker-darwin-$GO_ARCH"
 
 cd "$ROOT_DIR"
 

@@ -46,7 +46,7 @@ jobs:
           mkdir -p dist
           go build -tags webkit2gtk_4_1 \
             -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
-            -o dist/job-tracker-linux-amd64 .
+            -o dist/job-hunt-tracker-linux-amd64 .
 
       - name: Build .deb package
         run: bash build/linux/build-deb.sh
@@ -56,7 +56,7 @@ jobs:
         with:
           name: linux
           path: |
-            dist/job-tracker-linux-amd64
+            dist/job-hunt-tracker-linux-amd64
             dist/*.deb
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -86,7 +86,7 @@ jobs:
           go-winres make --in winres/winres.json
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           go build -ldflags "-s -w -X main.version=${{ github.ref_name }} -H=windowsgui" `
-            -o dist\job-tracker-windows-amd64.exe .
+            -o dist\job-hunt-tracker-windows-amd64.exe .
 
       - name: Install NSIS
         run: choco install nsis --no-progress -y
@@ -102,7 +102,7 @@ jobs:
         with:
           name: windows
           path: |
-            dist/job-tracker-windows-amd64.exe
+            dist/job-hunt-tracker-windows-amd64.exe
             dist/JobHuntTracker-Setup.exe
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -127,7 +127,7 @@ jobs:
           go mod tidy
           mkdir -p dist
           go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
-            -o dist/job-tracker-darwin-arm64 .
+            -o dist/job-hunt-tracker-darwin-arm64 .
 
       - name: Build macOS amd64 binary (Intel)
         env:
@@ -136,15 +136,15 @@ jobs:
           GOARCH: amd64
         run: |
           go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
-            -o dist/job-tracker-darwin-amd64 .
+            -o dist/job-hunt-tracker-darwin-amd64 .
 
       - name: Create universal binary (arm64 + amd64)
         run: |
-          lipo -create -output dist/job-tracker-darwin-universal \
-            dist/job-tracker-darwin-arm64 \
-            dist/job-tracker-darwin-amd64
+          lipo -create -output dist/job-hunt-tracker-darwin-universal \
+            dist/job-hunt-tracker-darwin-arm64 \
+            dist/job-hunt-tracker-darwin-amd64
           # Use universal binary for the .app
-          cp dist/job-tracker-darwin-universal dist/job-tracker-darwin-arm64
+          cp dist/job-hunt-tracker-darwin-universal dist/job-hunt-tracker-darwin-arm64
 
       - name: Build .app bundle and .dmg
         run: bash build/macos/build-dmg.sh
@@ -154,7 +154,7 @@ jobs:
         with:
           name: macos
           path: |
-            dist/job-tracker-darwin-universal
+            dist/job-hunt-tracker-darwin-universal
             dist/JobHuntTracker.dmg
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -192,11 +192,11 @@ jobs:
             | Platform | File | Notes |
             |----------|------|-------|
             | **Windows** | `JobHuntTracker-Setup.exe` | Installer wizard — recommended |
-            | **Windows** | `job-tracker-windows-amd64.exe` | Standalone binary |
+            | **Windows** | `job-hunt-tracker-windows-amd64.exe` | Standalone binary |
             | **macOS** | `JobHuntTracker.dmg` | Drag to Applications |
-            | **macOS** | `job-tracker-darwin-universal` | Universal binary (Intel + Apple Silicon) |
+            | **macOS** | `job-hunt-tracker-darwin-universal` | Universal binary (Intel + Apple Silicon) |
             | **Linux** | `job-hunt-tracker_*_amd64.deb` | `sudo dpkg -i` |
-            | **Linux** | `job-tracker-linux-amd64` | Standalone binary |
+            | **Linux** | `job-hunt-tracker-linux-amd64` | Standalone binary |
 
             ### macOS Gatekeeper
             On first launch: right-click the app → **Open** to bypass the unsigned-app warning.
