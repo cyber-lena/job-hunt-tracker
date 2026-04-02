@@ -24,12 +24,13 @@ jobs:
         with:
           go-version: "1.22"
           cache: true
-
-      - name: Install WebKitGTK (webview runtime)
+          
+      - name: Install WebKitGTK and compatibility symlink
         run: |
-         sudo apt-get update -qq
-         sudo apt-get install -y --no-install-recommends \
-         gcc pkg-config libwebkit2gtk-4.1-dev
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev
+          sudo ln -s /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.1.pc \
+               /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.0.pc
 
       - name: Build Linux binary
         env:
