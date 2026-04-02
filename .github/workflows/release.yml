@@ -152,7 +152,6 @@ jobs:
           path: |
             dist/job-tracker-darwin-universal
             dist/JobHuntTracker.dmg
-
 # ══════════════════════════════════════════════════════════════════════════════
 #  RELEASE — collect all artifacts and publish to GitHub Releases
 # ══════════════════════════════════════════════════════════════════════════════
@@ -178,6 +177,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref_name }}
           name: "Job Hunt Tracker ${{ github.ref_name }}"
           body: |
             ## Job Hunt Tracker ${{ github.ref_name }}
