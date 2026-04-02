@@ -39,7 +39,8 @@ jobs:
         run: |
           go mod tidy
           mkdir -p dist
-          go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
+          go build -tags webkit2gtk_4_1 \
+            -ldflags "-s -w -X main.version=${{ github.ref_name }}" \
             -o dist/job-tracker-linux-amd64 .
 
       - name: Build .deb package
