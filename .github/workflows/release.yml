@@ -25,11 +25,16 @@ jobs:
           go-version: "1.22"
           cache: true
           
-      - name: Install WebKitGTK
+      - name: Install WebKitGTK (webview runtime)
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             gcc pkg-config libwebkit2gtk-4.1-dev
+          # Alias webkit2gtk-4.0 → webkit2gtk-4.1 so webview_go's hardcoded
+          # pkg-config name resolves correctly on Ubuntu 22.04+
+          sudo ln -sf \
+            /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.1.pc \
+            /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.0.pc
 
       - name: Build Linux binary
         env:
