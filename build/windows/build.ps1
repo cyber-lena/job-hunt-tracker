@@ -16,6 +16,11 @@ Write-Host "[..] Running go mod tidy..."
 go mod tidy
 if ($LASTEXITCODE -ne 0) { Write-Host "[!!] go mod tidy failed."; exit 1 }
 
+Write-Host "[..] Generating Windows resources (icon + manifest)..."
+go install github.com/tc-hib/go-winres@latest
+go-winres make --in winres\winres.json
+if ($LASTEXITCODE -ne 0) { Write-Host "[!!] go-winres failed. Make sure winres\icon.ico exists."; exit 1 }
+
 Write-Host "[..] Building job-tracker-windows-amd64.exe..."
 go build -ldflags "-s -w -H=windowsgui" -o dist\job-tracker-windows-amd64.exe .
 if ($LASTEXITCODE -ne 0) { Write-Host "[!!] Build failed."; exit 1 }
