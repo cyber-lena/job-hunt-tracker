@@ -28,6 +28,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo [..] Building...
+rsrc -ico assets/icon.ico
 go build -ldflags "-s -w -H=windowsgui" -o dist\job-hunt-tracker-windows-amd64.exe .
 if %ERRORLEVEL% neq 0 (
     echo [!!] Build failed.

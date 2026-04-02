@@ -70,7 +70,7 @@ build-windows: generate-rsrc
 	  go build $(LDFLAGS_WIN) -o $(DIST)/$(BINARY)-windows-amd64.exe .
 
 generate-rsrc:
-	rsrc -ico winres/icon.ico
+	rsrc -ico assets/icon.ico
 # ── Windows cross-compile from Linux using mingw-w64 (alias) ─────────────────
 build-windows-cross: build-windows
 
