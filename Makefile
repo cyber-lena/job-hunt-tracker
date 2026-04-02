@@ -41,7 +41,7 @@ tidy:
 build-linux:
 	@mkdir -p $(DIST)
 	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \
-	  go build $(LDFLAGS) -o $(DIST)/$(BINARY)-linux-amd64 .
+	  go build -tags webkit2gtk_4_1 $(LDFLAGS) -o $(DIST)/$(BINARY)-linux-amd64 .
 	@echo "  → $(DIST)/$(BINARY)-linux-amd64"
 
 # ── macOS Intel (must run on macOS host) ──────────────────────────────────────
