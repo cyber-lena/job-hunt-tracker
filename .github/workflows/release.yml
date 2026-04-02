@@ -25,12 +25,10 @@ jobs:
           go-version: "1.22"
           cache: true
           
-      - name: Install WebKitGTK and compatibility symlink
+      - name: Install WebKitGTK
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev
-          sudo ln -s /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.1.pc \
-               /usr/lib/x86_64-linux-gnu/pkgconfig/webkit2gtk-4.0.pc
+          sudo apt-get install -y libwebkit2gtk-4.1-dev
 
       - name: Build Linux binary
         env:
