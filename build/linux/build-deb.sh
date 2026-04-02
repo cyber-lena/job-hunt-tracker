@@ -40,7 +40,12 @@ cd "$ROOT_DIR"
 if [ ! -f "$BINARY_SRC" ]; then
   echo "▶  Building linux/amd64 binary…"
   go mod tidy
-  GOOS=linux GOARCH=amd64 go build -tags webkit2gtk_4_1 -ldflags "-s -w" -o "$BINARY_SRC" .
+  # Alias webkit2gtk-4.0 → webkit2gtk-4.1 for pkg-config on Ubuntu 22.04+
+  if pkg-config --exists webkit2gtk-4.1 2>/dev/null && ! pkg-config --exists webkit2gtk-4.0 2>/dev/null; then
+    PC_DIR=$(pkg-config --variable pc_path pkg-config 2>/dev/null | tr ':' '\n' | grep pkgconfig | head -1)
+    [ -n "$PC_DIR" ] && sudo ln -sf "$PC_DIR/webkit2gtk-4.1.pc" "$PC_DIR/webkit2gtk-4.0.pc" 2>/dev/null || true
+  fi
+  GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o "$BINARY_SRC" .
 fi
 echo "✔  Binary: $BINARY_SRC"
 
@@ -71,9 +76,30 @@ StartupNotify=true
 DESKTOP
 chmod 644 "$DEB_ROOT$INSTALL_APP/$PKG_NAME.desktop"
 
-# SVG icon (inline — so we don't need an external asset)
-mkdir -p "$DEB_ROOT$INSTALL_ICON"
-cat > "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.svg" <<'ICON'
+# Icons — install to hicolor theme for GNOME/KDE and to pixmaps as fallback
+ICON_PNG="$ROOT_DIR/assets/icon.png"
+
+if [ -f "$ICON_PNG" ]; then
+  for size in 16 32 48 128 256; do
+    ICON_DIR="$DEB_ROOT/usr/share/icons/hicolor/${size}x${size}/apps"
+    mkdir -p "$ICON_DIR"
+    if command -v convert >/dev/null 2>&1; then
+      convert "$ICON_PNG" -resize "${size}x${size}" "$ICON_DIR/$PKG_NAME.png"
+    else
+      # Fallback: copy full-size icon (desktop environments scale it)
+      cp "$ICON_PNG" "$ICON_DIR/$PKG_NAME.png"
+    fi
+    chmod 644 "$ICON_DIR/$PKG_NAME.png"
+  done
+  # Also install to pixmaps for legacy fallback
+  mkdir -p "$DEB_ROOT$INSTALL_ICON"
+  cp "$ICON_PNG" "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.png"
+  chmod 644 "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.png"
+  echo "✔  Icons installed"
+else
+  # Fallback: inline SVG if no PNG available
+  mkdir -p "$DEB_ROOT$INSTALL_ICON"
+  cat > "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.svg" <<'ICON'
 <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="g" x1="0" y1="48" x2="48" y2="0" gradientUnits="userSpaceOnUse">
@@ -89,7 +115,9 @@ cat > "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.svg" <<'ICON'
   <circle cx="24" cy="33.5" r="2" fill="url(#g)"/>
 </svg>
 ICON
-chmod 644 "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.svg"
+  chmod 644 "$DEB_ROOT$INSTALL_ICON/$PKG_NAME.svg"
+  echo "⚠  assets/icon.png not found — using inline SVG fallback"
+fi
 
 # ── 3. control file ───────────────────────────────────────────────────────────
 mkdir -p "$DEB_ROOT/DEBIAN"
@@ -114,6 +142,9 @@ cat > "$DEB_ROOT/DEBIAN/postinst" <<'POSTINST'
 set -e
 if command -v update-desktop-database >/dev/null 2>&1; then
   update-desktop-database /usr/share/applications || true
+fi
+if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+  gtk-update-icon-cache -f -t /usr/share/icons/hicolor || true
 fi
 POSTINST
 chmod 755 "$DEB_ROOT/DEBIAN/postinst"
