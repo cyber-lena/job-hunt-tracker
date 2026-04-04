@@ -17,6 +17,7 @@
 !define INSTALL_DIR     "$PROGRAMFILES64\JobHuntTracker"
 !define UNINSTALL_KEY   "Software\Microsoft\Windows\CurrentVersion\Uninstall\JobHuntTracker"
 !define SOURCE_EXE      "..\..\dist\job-hunt-tracker-windows-amd64.exe"
+!define ICON_PATH       "..\..\winres\icon.ico"
 
 ; ── Metadata ──────────────────────────────────────────────────────────────────
 Name              "${APP_NAME}"
@@ -25,7 +26,7 @@ InstallDir        "${INSTALL_DIR}"
 InstallDirRegKey  HKLM "${UNINSTALL_KEY}" "InstallLocation"
 RequestExecutionLevel admin
 SetCompressor     /SOLID lzma
-Icon "..\..\winres\icon.ico"
+Icon              "${ICON_PATH}"
 Unicode           True
 
 ; ── Modern UI ─────────────────────────────────────────────────────────────────
