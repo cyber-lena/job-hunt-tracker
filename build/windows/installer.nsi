@@ -72,10 +72,6 @@ Section "Install"
   ; ── Uninstaller ────────────────────────────────────────────────────────────
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-
-  WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoModify"         1
-  WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoRepair" 
-
   ; ── Registry (Add/Remove Programs) ────────────────────────────────────────
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "DisplayName"          "${APP_NAME}"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "UninstallString"      "$INSTDIR\Uninstall.exe"
