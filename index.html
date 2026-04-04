@@ -690,7 +690,17 @@
 
 <!-- Toast -->
 <div id="toast"></div>
-
+<dialog id="customConfirm" style="border:none; border-radius:12px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.3); background:#1e1b4b; color:white; max-width:400px;">
+  <div style="text-align:center;">
+    <h3 style="margin-top:0; color:#fca5a5;">Confirm Action</h3>
+    <p id="confirmMessage" style="color:#cbd5e1; line-height:1.5;">Are you sure you want to delete application?</p>
+    
+    <div style="margin-top:24px; display:flex; gap:12px; justify-content:center;">
+      <button id="cancelBtn" style="background:#334155; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">Cancel</button>
+      <button id="okBtn" style="background:#7c3aed; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">Confirm</button>
+    </div>
+  </div>
+</dialog>
 <script>
 const API = '/api/applications';
 let apps    = [];
@@ -979,9 +989,36 @@ async function saveApplication() {
   }
 }
 
+const dialog = document.getElementById('customConfirm');
+const okBtn = document.getElementById('okBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const msgEl = document.getElementById('confirmMessage');
+
+function askUser(message) {
+  return new Promise((resolve) => {
+    msgEl.innerText = message;
+    dialog.showModal(); // This opens the dialog as a top-level modal
+
+    okBtn.onclick = () => {
+      dialog.close();
+      resolve(true);
+    };
+
+    cancelBtn.onclick = () => {
+      dialog.close();
+      resolve(false);
+    };
+    
+    // Also handle the "Escape" key
+    dialog.oncancel = () => resolve(false);
+  });
+}
+
+
 async function deleteApp(id) {
-  if (!confirm('Delete this application?')) return;
-  try {
+  const confirmed = await askUser("Do you want to delete this job application?");
+  if (!confirmed) return;
+ try {
     const res = await fetch(`${API}/${id}`, { method:'DELETE' });
     if (!res.ok) { toast('Delete failed', true); return; }
     apps = apps.filter(a => a.id !== id);
@@ -991,8 +1028,8 @@ async function deleteApp(id) {
   } catch(e) {
     toast('Network error', true);
   }
+    console.log("Deleted from database!");
 }
-
 // ── Toast ──────────────────────────────────────────────────────────────────
 
 let toastTimer;
