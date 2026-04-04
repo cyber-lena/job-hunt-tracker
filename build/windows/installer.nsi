@@ -71,6 +71,8 @@ Section "Install"
 
   ; ── Uninstaller ────────────────────────────────────────────────────────────
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoModify"         1
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoRepair" 
 
@@ -79,9 +81,9 @@ Section "Install"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "UninstallString"      "$INSTDIR\Uninstall.exe"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "InstallLocation"      "$INSTDIR"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "Publisher"            "${PUBLISHER}"
+  WriteRegStr   HKLM "${UNINSTALL_KEY}" "DisplayIcon"          "$INSTDIR\${APP_EXE},0"
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoModify"             1
-  WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoRepair"             1
-  WriteRegStr   HKLM "${UNINSTALL_KEY}" "DisplayIcon"      "$INSTDIR\${APP_EXE},0"
+  WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoRepair"             1 
 
 SectionEnd
 
