@@ -25,7 +25,7 @@ InstallDir        "${INSTALL_DIR}"
 InstallDirRegKey  HKLM "${UNINSTALL_KEY}" "InstallLocation"
 RequestExecutionLevel admin
 SetCompressor     /SOLID lzma
-Icon "..\..\winres/icon.ico"
+Icon "..\..\winres\icon.ico"
 Unicode           True
 
 ; ── Modern UI ─────────────────────────────────────────────────────────────────
