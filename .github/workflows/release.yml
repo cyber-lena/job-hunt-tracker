@@ -84,6 +84,10 @@ jobs:
           # (embeds icon.ico into the .exe so Explorer shows the custom icon)
           go install github.com/tc-hib/go-winres@latest
           go-winres make --in winres/winres.json
+          # CRITICAL: Move .syso to the project root so Go builds it into the EXE
+          if (Test-Path "winres/*.syso") {
+            Move-Item "winres/*.syso" "." -Force
+          }
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           go build -ldflags "-s -w -X main.version=${{ github.ref_name }} -H=windowsgui" `
             -o dist\job-hunt-tracker-windows-amd64.exe .
