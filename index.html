@@ -444,6 +444,52 @@
   }
   #toast.error { border-left-color: var(--red); }
 
+  /* ── Deletion Confirm ── */
+  #customConfirm {
+    background: #1e1b4b; /*  Navy Background */
+    color: white;
+    border-radius: 16px;
+    border: 2px solid #6366f1; /* Indigo border */
+    padding: 30px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    
+    /* Centering Magic */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0; 
+  }
+
+  #customConfirm::backdrop {
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  .btn-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .btn-confirm {
+    background: #7c3aed; /* Your Purple */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .btn-cancel {
+    background: transparent;
+    color: #94a3b8;
+    padding: 10px 20px;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    cursor: pointer;
+  }
   /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -690,14 +736,16 @@
 
 <!-- Toast -->
 <div id="toast"></div>
-<dialog id="customConfirm" style="border:none; border-radius:12px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.3); background:#1e1b4b; color:white; max-width:400px;">
-  <div style="text-align:center;">
-    <h3 style="margin-top:0; color:#fca5a5;">Confirm Action</h3>
-    <p id="confirmMessage" style="color:#cbd5e1; line-height:1.5;">Are you sure you want to delete application?</p>
+
+<!--Deletion confirmaiton dialog--->
+<dialog id="customConfirm">
+  <div style="text-align: center;">
+    <h3 style="color: #fca5a5; margin-top: 0;">Confirm Delete</h3>
+    <p>Are you sure you want to remove this application?</p>
     
-    <div style="margin-top:24px; display:flex; gap:12px; justify-content:center;">
-      <button id="cancelBtn" style="background:#334155; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">Cancel</button>
-      <button id="okBtn" style="background:#7c3aed; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">Confirm</button>
+    <div class="btn-container">
+      <button class="btn-cancel" onclick="this.closest('dialog').close()">Cancel</button>
+      <button class="btn-confirm" id="confirmAction">Yes, Delete</button>
     </div>
   </div>
 </dialog>
