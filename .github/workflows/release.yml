@@ -80,9 +80,13 @@ jobs:
           GOARCH: amd64
         run: |
           go mod tidy
+          # Install go-winres and generate the .syso resource file
+          # (embeds icon.ico into the .exe so Explorer shows the custom icon)
+          go install github.com/tc-hib/go-winres@latest
+          go-winres make --in winres/winres.json
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           go build -ldflags "-s -w -X main.version=${{ github.ref_name }} -H=windowsgui" `
-            -o dist\job-tracker-windows-amd64.exe .
+            -o dist\job-hunt-tracker-windows-amd64.exe .
 
       - name: Install NSIS
         run: choco install nsis --no-progress -y

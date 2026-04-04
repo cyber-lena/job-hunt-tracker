@@ -21,18 +21,27 @@ if %ERRORLEVEL% neq 0 (
 
 echo [..] Generating Windows resources (icon + manifest)...
 go install github.com/tc-hib/go-winres@latest
-go-winres make --in winres\winres.json
+go-winres make --in ..\..\winres\winres.json
 if %ERRORLEVEL% neq 0 (
     echo [!!] go-winres failed. Make sure winres\icon.ico exists.
     exit /b 1
 )
 
 echo [..] Building...
-go build -ldflags "-s -w -H=windowsgui" -o dist\job-tracker-windows-amd64.exe .
+set CGO_ENABLED=1
+set GOOS=windows
+set GOARCH=amd64
+set CC=
+set CGO_CFLAGS=-IC:\WebView2SDK\build\native\include
+go env CGO_CFLAGS
+set CGO_LDFLAGS=-LC:\WebView2SDK\x64
+go clean -cache -modcache
+go build -ldflags "-s -w -H=windowsgui" -o dist\job-tracker-windows-amd64.exe ..\..\
 if %ERRORLEVEL% neq 0 (
     echo [!!] Build failed.
     exit /b 1
 )
 
 echo [OK] dist\job-tracker-windows-amd64.exe
+
 endlocal
