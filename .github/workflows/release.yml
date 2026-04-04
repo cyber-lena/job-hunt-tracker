@@ -102,7 +102,7 @@ jobs:
         with:
           name: windows
           path: |
-            dist/job-tracker-windows-amd64.exe
+            dist/job-hunt-tracker-windows-amd64.exe
             dist/JobHuntTracker-Setup.exe
 
 # ══════════════════════════════════════════════════════════════════════════════
