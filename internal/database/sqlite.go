@@ -81,8 +81,8 @@ func (s *SQLiteStore) List() ([]model.Application, error) {
 func (s *SQLiteStore) Create(a model.Application) (model.Application, error) {
 	t := now()
 	appliedAt:=now()
-	if a.AppliedAt!=nil{
-		appliedAt = a.appliedAt
+	if a.AppliedAt!=""{
+		appliedAt = a.AppliedAt
 	}
 	res, err := s.db.Exec(`
 		INSERT INTO applications
