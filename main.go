@@ -14,6 +14,7 @@ import (
 
 	webview "github.com/webview/webview_go"
 	"job-tracker/internal/database"
+	"job-tracker/internal/icon"
 )
 
 //go:embed index.html
@@ -175,6 +176,12 @@ func main() {
 	w := webview.New(false) // false = devtools disabled in release builds
 	defer w.Destroy()
     
+	// Set custom icon in the title bar and taskbar (Windows only).
+	// The .exe file icon is set separately via the embedded .syso resource
+	// compiled by go-winres (see winres/ directory).
+	w.Dispatch(func() {
+		icon.SetWindowIcon(uintptr(w.Window()))
+	})
 	w.SetTitle("Job Hunt Tracker")
 	w.SetSize(1280, 820, webview.HintNone)
 	w.Navigate(appURL)
