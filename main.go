@@ -24,7 +24,7 @@ var indexHTML []byte
 // ─── Server ───────────────────────────────────────────────────────────────────
 
 type server struct {
-	store database.Store
+	store Store
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
