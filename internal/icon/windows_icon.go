@@ -13,7 +13,7 @@ import (
 // The .syso resource (built by go-winres) sets the .exe file icon shown in
 // Explorer and the taskbar before the window opens.
 //
-//go:embed icon.ico
+//go:embed icon.png
 var appIconICO []byte
 
 var (
