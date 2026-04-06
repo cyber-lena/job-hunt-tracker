@@ -13,7 +13,7 @@ import (
 // The .syso resource (built by go-winres) sets the .exe file icon shown in
 // Explorer and the taskbar before the window opens.
 //
-//go:embed icon.png
+//go:embed icon.ico
 var appIconICO []byte
 
 var (
@@ -33,7 +33,7 @@ const (
 	iconBig     = 1
 )
 
-// setWindowIcon loads the embedded .ico and sends WM_SETICON to hwnd.
+// SetWindowIcon loads the embedded .ico and sends WM_SETICON to hwnd.
 // hwnd is the native HWND returned by webview.Window() cast to uintptr.
 func SetWindowIcon(hwnd uintptr) {
 	hmod, _, _ := procGetMod.Call(0)

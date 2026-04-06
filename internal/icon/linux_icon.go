@@ -26,7 +26,7 @@ import (
 //go:embed icon.png
 var iconPNG []byte
 
-// setWindowIcon sets the GTK window icon from the embedded PNG.
+// SetWindowIcon sets the GTK window icon from the embedded PNG.
 // hwnd is the GtkWidget* returned by webview.Window() on Linux.
 func SetWindowIcon(hwnd uintptr) {
 	if len(iconPNG) == 0 || hwnd == 0 {

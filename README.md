@@ -104,42 +104,6 @@ go mod tidy
 go run .
 ```
 
----
-
-## Project Structure
-
-```
-job-tracker/
-├── main.go                          ← webview window + HTTP server + embed
-├── go.mod
-├── index.html                       ← Dashboard UI (compiled into binary)
-├── Makefile
-├── build/
-│   ├── windows/installer.nsi        ← NSIS → Setup.exe
-│   ├── macos/build-dmg.sh           ← .app bundle + .dmg
-│   └── linux/build-deb.sh           ← .deb package
-├── scripts/                         ← quick-launch scripts (no installer)
-│   ├── install.sh
-│   ├── install.bat
-│   └── install.ps1
-└── internal/
-    └── database/
-        └── sqlite.go                ← Store interface + SQLite implementation
-```
-
----
-
-## API
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/applications` | List all |
-| POST | `/api/applications` | Create |
-| PUT | `/api/applications/:id` | Update |
-| DELETE | `/api/applications/:id` | Delete |
-
----
-
 ## Application Statuses
 
 `Wishlist` → `Applied` → `Screening` → `Interview` → `Offer` / `Rejected` / `Withdrawn` / `Ghosted`
