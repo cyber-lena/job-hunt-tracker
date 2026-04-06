@@ -557,6 +557,42 @@
     transition: border-color 0.15s;
   }
   .page-size-wrap select:focus { border-color: var(--accent); }
+
+    /* Custom styling to make the native date picker look more integrated in dark mode */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+            /* Inverting the default icon for some browsers that show it */
+            filter: invert(1);
+        }
+
+        .date-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .custom-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #94a3b8; /* slate-400 */
+        }
+
+        /* Adjusting the native picker's internal appearance for better dark mode visibility */
+        input[type="date"] {
+            color-scheme: dark;
+        }
 </style>
 </head>
 <body>
@@ -720,6 +756,21 @@
         <div class="field">
           <label>Contact Email / LinkedIn</label>
           <input type="text" id="f-contact-info" placeholder="jane@acme.com">
+        </div>
+        <div class="field">
+          <label>Application Date</label>
+           <div class="date-container group">
+                    <input 
+                        type="date" 
+                        id="f-applied-at" 
+                        name="event-date"
+                        class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none appearance-none hover:bg-slate-700/50"
+                    >
+                    <!-- Calendar Icon (Lucide-like SVG) -->
+                    <div class="custom-icon group-focus-within:text-indigo-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                </div>
         </div>
         <div class="field full">
           <label>Comments / Notes</label>
@@ -962,6 +1013,7 @@ function openModal(id) {
     document.getElementById('f-currency').value = a.currency;
     document.getElementById('f-contact-name').value = a.contact_name;
     document.getElementById('f-contact-info').value = a.contact_info;
+    document.getElementById('f-applied-at').value = a.applied_at;
     document.getElementById('f-comments').value = a.comments;
   }
   overlay.classList.add('open');

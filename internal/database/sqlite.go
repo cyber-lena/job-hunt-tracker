@@ -132,12 +132,12 @@ func (s *SQLiteStore) Update(id int, a Application) (Application, bool, error) {
 		UPDATE applications SET
 		  company=?, role=?, status=?,
 		  salary_min=?, salary_max=?, currency=?,
-		  comments=?, contact_name=?, contact_info=?,
+		  comments=?, contact_name=?, contact_info=?, applied_at=?,
 		  updated_at=?
 		WHERE id=?`,
 		a.Company, a.Role, a.Status,
 		a.SalaryMin, a.SalaryMax, a.Currency,
-		a.Comments, a.ContactName, a.ContactInfo,
+		a.Comments, a.ContactName, a.ContactInfo, a.AppliedAt,
 		t, id,
 	)
 	if err != nil {
