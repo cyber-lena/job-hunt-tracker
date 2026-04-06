@@ -19,6 +19,14 @@
 !define SOURCE_EXE      "..\..\dist\job-hunt-tracker-windows-amd64.exe"
 !define ICON_PATH       "..\..\winres\icon.ico"
 
+!include "MUI2.nsh"
+
+; Set the icon for the Installer (.exe)
+!define MUI_ICON  "${ICON_PATH}"
+
+; Set the icon for the Uninstaller
+!define MUI_UNICON  "${ICON_PATH}"
+
 ; ── Metadata ──────────────────────────────────────────────────────────────────
 Name              "${APP_NAME}"
 OutFile           "..\..\dist\JobHuntTracker-Setup.exe"
@@ -55,6 +63,7 @@ Section "Install"
 
   ; Copy binary (renamed to friendly name)
   File /oname=${APP_EXE} "${SOURCE_EXE}"
+  File "${ICON_PATH}"
 
   ; ── Start Menu shortcut ────────────────────────────────────────────────────
   CreateDirectory "$SMPROGRAMS\${APP_NAME}"
@@ -66,8 +75,9 @@ Section "Install"
 
   ; ── Desktop shortcut ───────────────────────────────────────────────────────
   CreateShortcut  "$DESKTOP\${APP_NAME}.lnk" \
-                  "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0 \
+                  "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\icon.ico" 0 \
                   SW_SHOWMINIMIZED "" "Track your job applications"
+
 
   ; ── Uninstaller ────────────────────────────────────────────────────────────
   WriteUninstaller "$INSTDIR\Uninstall.exe"
