@@ -75,9 +75,11 @@ Section "Install"
 
   ; ── Desktop shortcut ───────────────────────────────────────────────────────
   CreateShortcut  "$DESKTOP\${APP_NAME}.lnk" \
-                  "$INSTDIR\${APP_EXE}" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\icon.ico" 0 \
+                  "$INSTDIR\${APP_EXE}" "" "$INSTDIR\icon.ico" 0 \
                   SW_SHOWMINIMIZED "" "Track your job applications"
+ ; --- Desktop shortcut ---
 
+ 
 
   ; ── Uninstaller ────────────────────────────────────────────────────────────
   WriteUninstaller "$INSTDIR\Uninstall.exe"
