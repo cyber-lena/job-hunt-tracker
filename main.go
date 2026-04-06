@@ -174,7 +174,7 @@ func main() {
 	//   Linux   → WebKitGTK   (needs libwebkit2gtk-4.1-dev)
 	w := webview.New(false) // false = devtools disabled in release builds
 	defer w.Destroy()
-
+    
 	w.SetTitle("Job Hunt Tracker")
 	w.SetSize(1280, 820, webview.HintNone)
 	w.Navigate(appURL)
