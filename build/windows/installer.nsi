@@ -30,23 +30,7 @@
 ; Define a unique name for your Mutex (use a GUID for best results)
 !define APP_MUTEX_NAME "JobHuntTrackerAppMutex"
 
-Function .onInit
-  ; Try to create the named mutex
-  System::Call 'kernel32::CreateMutex(p 0, i 0, t "${APP_MUTEX_NAME}") p .r1 ? e'
-  Pop $R0
 
-  ; Error code 183 means 'ERROR_ALREADY_EXISTS'
-  IntCmp $R0 183 isRunning
-  Return
-
-isRunning:
-  ; Find the window by Class Name or Title
-  FindWindow $0 "JobHuntTracker" "Job Hunt Tracker"
-  StrCmp $0 0 +2
-    System::Call "user32::SetForegroundWindow(p $0)"
-  
-  Abort
-FunctionEnd
 ; ── Metadata ──────────────────────────────────────────────────────────────────
 Name              "${APP_NAME}"
 OutFile           "..\..\dist\JobHuntTracker-Setup.exe"
@@ -74,6 +58,24 @@ Unicode           True
 !insertmacro MUI_UNPAGE_INSTFILES
 
 !insertmacro MUI_LANGUAGE "English"
+
+Function .onInit
+  ; Try to create the named mutex
+  System::Call 'kernel32::CreateMutex(p 0, i 0, t "${APP_MUTEX_NAME}") p .r1 ? e'
+  Pop $R0
+
+  ; Error code 183 means 'ERROR_ALREADY_EXISTS'
+  IntCmp $R0 183 isRunning
+  Return
+
+isRunning:
+  ; Find the window by Class Name or Title
+  FindWindow $0 "JobHuntTracker" "Job Hunt Tracker"
+  StrCmp $0 0 +2
+    System::Call "user32::SetForegroundWindow(p $0)"
+  
+  Abort
+FunctionEnd
 
 ; ── Install section ───────────────────────────────────────────────────────────
 Section "Install"
