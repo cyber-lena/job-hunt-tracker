@@ -15,6 +15,7 @@ import (
 	webview "github.com/webview/webview_go"
 	"job-tracker/internal/database"
 	"job-tracker/internal/icon"
+	"job-tracker/internal/model"
 )
 
 //go:embed index.html
@@ -27,6 +28,16 @@ type server struct {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+// ─── Interface ────────────────────────────────────────────────────────────────
+
+type Store interface {
+	List() ([]model.Application, error)
+	Create(a model.Application) (model.Application, error)
+	Update(id int, a model.Application) (model.Application, bool, error)
+	Delete(id int) (bool, error)
+	Close() error
+}
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
@@ -57,7 +68,7 @@ func (s *server) listApplications(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) createApplication(w http.ResponseWriter, r *http.Request) {
-	var a database.Application
+	var a model.Application
 	if err := json.NewDecoder(r.Body).Decode(&a); err != nil {
 		writeError(w, 400, "Invalid JSON")
 		return
@@ -81,7 +92,7 @@ func (s *server) createApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) updateApplication(w http.ResponseWriter, r *http.Request, id int) {
-	var a database.Application
+	var a model.Application
 	if err := json.NewDecoder(r.Body).Decode(&a); err != nil {
 		writeError(w, 400, "Invalid JSON")
 		return

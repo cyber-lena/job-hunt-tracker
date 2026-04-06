@@ -2,37 +2,11 @@ package database
 
 import (
 	"database/sql"
+	"job-tracker/internal/model"
 	"time"
 
 	_ "modernc.org/sqlite"
 )
-
-// ─── Model ───────────────────────────────────────────────────────────────────
-
-type Application struct {
-	ID          int    `json:"id"`
-	Company     string `json:"company"`
-	Role        string `json:"role"`
-	Status      string `json:"status"`
-	SalaryMin   *int   `json:"salary_min"`
-	SalaryMax   *int   `json:"salary_max"`
-	Currency    string `json:"currency"`
-	Comments    string `json:"comments"`
-	ContactName string `json:"contact_name"`
-	ContactInfo string `json:"contact_info"`
-	AppliedAt   string `json:"applied_at"`
-	UpdatedAt   string `json:"updated_at"`
-}
-
-// ─── Interface ────────────────────────────────────────────────────────────────
-
-type Store interface {
-	List() ([]Application, error)
-	Create(a Application) (Application, error)
-	Update(id int, a Application) (Application, bool, error)
-	Delete(id int) (bool, error)
-	Close() error
-}
 
 // ─── SQLite implementation ────────────────────────────────────────────────────
 
@@ -75,7 +49,7 @@ func (s *SQLiteStore) Close() error {
 func now() string { return time.Now().Format("2006-01-02T15:04:05") }
 
 // List returns all applications ordered by updated_at DESC.
-func (s *SQLiteStore) List() ([]Application, error) {
+func (s *SQLiteStore) List() ([]model.Application, error) {
 	rows, err := s.db.Query(`
 		SELECT id, company, role, status,
 		       salary_min, salary_max, currency,
@@ -87,9 +61,9 @@ func (s *SQLiteStore) List() ([]Application, error) {
 	}
 	defer rows.Close()
 
-	apps := []Application{}
+	apps := []model.Application{}
 	for rows.Next() {
-		var a Application
+		var a model.Application
 		if err := rows.Scan(
 			&a.ID, &a.Company, &a.Role, &a.Status,
 			&a.SalaryMin, &a.SalaryMax, &a.Currency,
@@ -104,29 +78,33 @@ func (s *SQLiteStore) List() ([]Application, error) {
 }
 
 // Create inserts a new application and returns it with ID and timestamps set.
-func (s *SQLiteStore) Create(a Application) (Application, error) {
+func (s *SQLiteStore) Create(a model.Application) (model.Application, error) {
 	t := now()
+	appliedAt:=now()
+	if a.AppliedAt!=nil{
+		appliedAt = a.appliedAt
+	}
 	res, err := s.db.Exec(`
 		INSERT INTO applications
 		  (company, role, status, salary_min, salary_max, currency,
 		   comments, contact_name, contact_info, applied_at, updated_at)
 		VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
 		a.Company, a.Role, a.Status, a.SalaryMin, a.SalaryMax, a.Currency,
-		a.Comments, a.ContactName, a.ContactInfo, t, t,
+		a.Comments, a.ContactName, a.ContactInfo, appliedAt, t,
 	)
 	if err != nil {
-		return Application{}, err
+		return model.Application{}, err
 	}
 	id, _ := res.LastInsertId()
 	a.ID = int(id)
-	a.AppliedAt = t
+	a.AppliedAt = appliedAt
 	a.UpdatedAt = t
 	return a, nil
 }
 
 // Update modifies an existing application by ID.
 // Returns the updated application, a found flag, and any error.
-func (s *SQLiteStore) Update(id int, a Application) (Application, bool, error) {
+func (s *SQLiteStore) Update(id int, a model.Application) (model.Application, bool, error) {
 	t := now()
 	res, err := s.db.Exec(`
 		UPDATE applications SET
@@ -141,11 +119,11 @@ func (s *SQLiteStore) Update(id int, a Application) (Application, bool, error) {
 		t, id,
 	)
 	if err != nil {
-		return Application{}, false, err
+		return model.Application{}, false, err
 	}
 	n, _ := res.RowsAffected()
 	if n == 0 {
-		return Application{}, false, nil
+		return model.Application{}, false, nil
 	}
 	a.ID = id
 	a.UpdatedAt = t
