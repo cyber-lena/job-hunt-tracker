@@ -68,7 +68,7 @@ Section "Install"
   ; ── Start Menu shortcut ────────────────────────────────────────────────────
   CreateDirectory "$SMPROGRAMS\${APP_NAME}"
   CreateShortcut  "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk" \
-                  "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0 \
+                  "$INSTDIR\${APP_EXE}" "" "$INSTDIR\icon.ico" 0 \
                   SW_SHOWMINIMIZED "" "Track your job applications"
   CreateShortcut  "$SMPROGRAMS\${APP_NAME}\Uninstall.lnk" \
                   "$INSTDIR\Uninstall.exe"
@@ -89,7 +89,7 @@ Section "Install"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "UninstallString"      "$INSTDIR\Uninstall.exe"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "InstallLocation"      "$INSTDIR"
   WriteRegStr   HKLM "${UNINSTALL_KEY}" "Publisher"            "${PUBLISHER}"
-  WriteRegStr   HKLM "${UNINSTALL_KEY}" "DisplayIcon"          "$INSTDIR\${APP_EXE},0"
+  WriteRegStr   HKLM "${UNINSTALL_KEY}" "DisplayIcon"          "$INSTDIR\icon.ico,0"
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoModify"             1
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoRepair"             1 
 
@@ -103,6 +103,7 @@ Section "Uninstall"
 
   Delete "$INSTDIR\${APP_EXE}"
   Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\icon.ico"
   RMDir  "$INSTDIR"
 
   Delete "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk"
