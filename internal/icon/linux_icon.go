@@ -23,7 +23,7 @@ import (
 	"unsafe"
 )
 
-//go:embed ../assets/icon.png
+//go:embed ../../assets/icon.png
 var iconPNG []byte
 
 // setWindowIcon sets the GTK window icon from the embedded PNG.
