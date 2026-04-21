@@ -265,3 +265,12 @@ jobs:
 
             ### macOS Gatekeeper note
             This build uses **ad-hoc signing** (no Apple Developer ID). On first launch you may see a Gatekeeper warning. To clear it after installing:
+
+             sudo xattr -rd com.apple.quarantine /Applications/JobHuntTracker.app
+            Or right-click the app → **Open** to approve it once manually.
+
+            ### Linux runtime dependency
+            sudo apt install libwebkit2gtk-4.1-0
+          draft: false
+          prerelease: false
+          f  iles: release/*
