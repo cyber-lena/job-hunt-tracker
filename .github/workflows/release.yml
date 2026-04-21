@@ -156,8 +156,8 @@ jobs:
           APP_PATH="dist/JobHuntTracker.app"  
           BINARY_NAME="job-hunt-tracker"          # must match CFBundleExecutable in Info.plist
           chmod +x "${APP_PATH}/Contents/MacOS/${BINARY_NAME}"
-          # Also harden any helper executables or bundled frameworks
-          find "${APP_PATH}/Contents" -type f -perm /0111 -exec chmod +x {} \;
+      # Also harden any helper executables or bundled frameworks
+      #   find "${APP_PATH}/Contents" -type f -perm /0111 -exec chmod +x {} \;
 
       #  ad-hoc code-sign the entire .app bundle ──────────────────────
       # --deep:  signs all nested frameworks/helpers in one pass
