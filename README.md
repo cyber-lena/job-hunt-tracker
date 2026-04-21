@@ -94,7 +94,6 @@ make build-darwin-amd64
 make build-windows        # native Windows host
 make build-windows-cross  # Linux host with mingw-w64
 ```
-
 ---
 
 ## Development
