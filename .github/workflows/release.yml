@@ -144,22 +144,22 @@ jobs:
             dist/job-hunt-tracker-darwin-amd64
           cp dist/job-hunt-tracker-darwin-universal dist/job-hunt-tracker-darwin-arm64
 
-      # ── NEW: build the .app bundle and .dmg via your existing script ──────
+      #  build the .app bundle and .dmg via your existing script ──────
       - name: Build .app bundle and .dmg
         run: bash build/macos/build-dmg.sh
 
-      # ── NEW: ensure the main executable bit is set inside the bundle ──────
+      # ensure the main executable bit is set inside the bundle ──────
       # (the Go binary should already be +x, but this is an explicit guarantee
       #  — macOS Gatekeeper will reject a bundle whose binary isn't executable)
       - name: Fix executable permissions in .app
         run: |
-          APP_PATH="dist/JobHuntTracker.app"   # adjust if your script names it differently
-          BINARY_NAME="JobHuntTracker"          # must match CFBundleExecutable in Info.plist
+          APP_PATH="dist/JobHuntTracker.app"  
+          BINARY_NAME="job-hunt-tracker"          # must match CFBundleExecutable in Info.plist
           chmod +x "${APP_PATH}/Contents/MacOS/${BINARY_NAME}"
           # Also harden any helper executables or bundled frameworks
           find "${APP_PATH}/Contents" -type f -perm /0111 -exec chmod +x {} \;
 
-      # ── NEW: ad-hoc code-sign the entire .app bundle ──────────────────────
+      #  ad-hoc code-sign the entire .app bundle ──────────────────────
       # --deep:  signs all nested frameworks/helpers in one pass
       # --force: re-signs if any prior signature exists
       # -s -:    ad-hoc identity (no Developer ID required)
@@ -179,7 +179,7 @@ jobs:
           # with: sudo xattr -rd com.apple.quarantine /Applications/JobHuntTracker.app
           # OR: right-click → Open on first launch.
 
-      # ── NEW: build a .pkg installer with pkgbuild ─────────────────────────
+      # build a .pkg installer with pkgbuild ─────────────────────────
       # pkgbuild installs the .app into /Applications and respects the signed
       # bundle as-is. The component-plist lets us declare that this package
       # is an application and should relocate to /Applications.
@@ -206,8 +206,8 @@ jobs:
             "${PKG_PATH}"
 
           # Ad-hoc sign the .pkg itself (same -s - identity)
-          productsign --sign - "${PKG_PATH}" "dist/JobHuntTracker-${{ github.ref_name }}-signed.pkg" \
-            || cp "${PKG_PATH}" "dist/JobHuntTracker-${{ github.ref_name }}-signed.pkg"
+          productsign --sign - "${PKG_PATH}" "dist/JobHuntTracker.pkg" \
+            || cp "${PKG_PATH}" "dist/JobHuntTracker.pkg"
           # productsign may not accept ad-hoc on all macOS versions; the fallback
           # cp ensures the artifact always exists.
 
@@ -219,7 +219,7 @@ jobs:
           path: |
             dist/job-hunt-tracker-darwin-universal
             dist/JobHuntTracker.dmg
-            dist/JobHuntTracker-${{ github.ref_name }}-signed.pkg
+            dist/JobHuntTracker.pkg
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  RELEASE
@@ -257,7 +257,7 @@ jobs:
             |----------|------|-------|
             | **Windows** | `JobHuntTracker-Setup.exe` | Installer wizard — recommended |
             | **Windows** | `job-hunt-tracker-windows-amd64.exe` | Standalone binary |
-            | **macOS** | `JobHuntTracker-${{ github.ref_name }}-signed.pkg` | Installer — recommended |
+            | **macOS** | `JobHuntTracker.pkg` | Installer — recommended |
             | **macOS** | `JobHuntTracker.dmg` | Drag to Applications |
             | **macOS** | `job-hunt-tracker-darwin-universal` | Universal binary (Intel + Apple Silicon) |
             | **Linux** | `job-hunt-tracker_*_amd64.deb` | `sudo dpkg -i` |
