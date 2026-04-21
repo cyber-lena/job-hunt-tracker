@@ -14,7 +14,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
-APP_NAME="Job Hunt Tracker"
+APP_NAME="JobHuntTracker"
 BUNDLE_ID="com.jobhunttracker.app"
 VERSION="1.0.0"
 ARCH="$(uname -m)"   # arm64 or x86_64 → we map to Go arch below
