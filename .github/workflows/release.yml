@@ -273,4 +273,4 @@ jobs:
             sudo apt install libwebkit2gtk-4.1-0
           draft: false
           prerelease: false
-          f  iles: release/*
+          files: release/*
