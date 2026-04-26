@@ -21,7 +21,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache: true
 
       - name: Install WebKitGTK (webview runtime)
@@ -114,7 +114,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache: true
 
       - name: Build macOS arm64 binary (Apple Silicon)
@@ -144,7 +144,7 @@ jobs:
             dist/job-hunt-tracker-darwin-amd64
           cp dist/job-hunt-tracker-darwin-universal dist/job-hunt-tracker-darwin-arm64
 
-      #  build the .app bundle and .dmg via your existing script ──────
+      #  build the .app bundle and .dmg via existing script ──────
       - name: Build .app bundle and .dmg
         run: bash build/macos/build-dmg.sh
 
